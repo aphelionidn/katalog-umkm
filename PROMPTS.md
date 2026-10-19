@@ -890,7 +890,18 @@ Tugas implementasi **US-12 (Pilih Jumlah dan Varian Pesanan)** telah selesai dik
 
 ## US-13 Bisa di-install di HP (PWA)
 
-**Prompt:**
+**Prompt:Baca docs/user-stories.md bagian US-13 dan AGENTS.md.
+
+Jadikan aplikasi ini Progressive Web App (PWA) agar dapat di-install di perangkat HP (Add to Home Screen):
+1. Buat Web App Manifest di public/manifest.json (atau gunakan Route Handler app/manifest.js/json sesuai standar Next.js App Router) dengan konfigurasi lengkap:
+   - name dan short_name sesuai identitas toko di lib/toko.js
+   - start_url: "/"
+   - display: "standalone"
+   - background_color dan theme_color yang sesuai
+   - icons: sediakan referensi icon resolusi 192x192 dan 512x512 (gunakan icon/gambar yang sudah tersedia di public/ atau fallback icon default).
+2. Daftarkan manifest dan meta tag PWA (theme-color, apple-touch-icon, apple-mobile-web-app-capable) di app/layout.jsx.
+3. Buat file service worker sederhana (public/sw.js) dan script registrasinya di client component layout untuk memenuhi syarat installability PWA browser tanpa merusak fungsionalitas fetch data server.
+4. Pastikan build aplikasi tetap aman dan tidak memunculkan error atau warning saat dijalankan dengan npm run dev dan npm run build.**
 
 **Hasil:**
 
