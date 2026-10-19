@@ -486,7 +486,7 @@ Tugas implementasi **US-06 (Proteksi halaman admin)** telah selesai dikerjakan s
 
 ## Debugging dan fitur bonus
 
-## US-07 List produk di halaman admin dari database
+## US-07 List produk di halaman admin dari database **[SENDIRI]**
 
 
 **Prompt:Baca docs/user-stories.md bagian US-07 dan AGENTS.md.
@@ -541,7 +541,7 @@ Tugas implementasi **US-07 (List Produk di Admin)** telah selesai dikerjakan ses
 
 **Perbaikan:**
 
-## US-08 Tambah produk (harus terkunci login)
+## US-08 Tambah produk (harus terkunci login) **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-08 dan AGENTS.md (khususnya aturan keamanan mutasi data di server).
 
@@ -612,7 +612,7 @@ Tugas implementasi **US-08 (Tambah Produk di Admin)** telah selesai dikerjakan s
 
 **Perbaikan:**
 
-## US-09 Ubah produk (harus terkunci login)
+## US-09 Ubah produk (harus terkunci login) **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-09 dan AGENTS.md (khususnya aturan mutasi data dan proteksi keamanan).
 
@@ -686,7 +686,7 @@ Tugas implementasi **US-09 (Edit / Ubah Produk)** telah selesai dikerjakan sesua
 
 **Perbaikan:**
 
-## US-10 Hapus produk (harus terkunci login)
+## US-10 Hapus produk (harus terkunci login) **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-10 dan AGENTS.md (khususnya aturan mutasi data dan proteksi keamanan).
 
@@ -751,7 +751,7 @@ Tugas implementasi **US-10 (Hapus Produk)** telah selesai dikerjakan sesuai spes
 
 **Perbaikan:**
 
-## US-11 Filter kategori atau pencarian
+## US-11 Filter kategori atau pencarian **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-11 dan AGENTS.md.
 
@@ -824,7 +824,7 @@ Tugas implementasi **US-11 (Filter Kategori dan Pencarian Produk)** telah selesa
 
 **Perbaikan:**
 
-## US-12 Pilih jumlah atau varian
+## US-12 Pilih jumlah atau varian **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-12 dan AGENTS.md.
 
@@ -891,7 +891,7 @@ Tugas implementasi **US-12 (Pilih Jumlah dan Varian Pesanan)** telah selesai dik
 
 **Perbaikan:**
 
-## US-13 Bisa di-install di HP (PWA)
+## US-13 Bisa di-install di HP (PWA) **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-13 dan AGENTS.md.
 
@@ -960,7 +960,7 @@ Tugas implementasi **US-13 (Progressive Web App / PWA)** telah selesai dikerjaka
 
 **Perbaikan:*
 
-## US-14 Deskripsi produk dibuat AI
+## US-14 Deskripsi produk dibuat AI **[SENDIRI]**
 
 **Prompt:Baca docs/user-stories.md bagian US-14 dan AGENTS.md (khususnya aturan penggunaan API key dan proteksi server).
 
