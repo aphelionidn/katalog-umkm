@@ -434,7 +434,106 @@ Tugas implementasi **US-05 (Ganti password)** telah selesai dikerjakan sesuai sp
 
 Buat file proxy.js di root proyek (Next.js 16). Semua rute /admin kecuali /admin/login wajib login dengan Supabase Auth; kalau belum login, alihkan ke /admin/login. Pastikan juga setiap Server Action yang mengubah data memeriksa login di server. Hapus CatatanBelumAktif dari halaman /admin.**
 
-**Hasil:**
+**Hasil:*Ran command: Check Next.js version (`node -e "console.log(require('next/package.json').version)"`)
+Created proxy.js
+Ran command: Run build with proxy.js (`npm run build`)
+Viewed actions.js:1-103
+Ran command: Check server actions (`Get-ChildItem -Recurse -File -Path app | Select-String "use server"`)
+Viewed page.jsx:1-28
+Created proxy.js
+Created page.jsx
+Created actions.js
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start test server (`npm run start -- -p 3011`)
+Created test_proxy.js
+Ran command: Run test_proxy.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_proxy.js"`)
+Killed task Start test server
+
+Tugas implementasi **US-06 (Proteksi halaman admin)** telah selesai dikerjakan sesuai aturan keamanan nomor 3 & 4 di [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md) dan spesifikasi di [docs/user-stories.md](file:///d:/creativehubtalent/katalog-umkm/docs/user-stories.md).
+
+### File yang Dibuat / Diubah
+
+1. **[`proxy.js`](file:///d:/creativehubtalent/katalog-umkm/proxy.js)**:
+   - Dibuat di root proyek sebagai pengganti `middleware.js` di Next.js 16.
+   - Memeriksa sesi pengguna via `supabase.auth.getUser()`.
+   - Mengalihkan pengunjung yang belum login ke `/admin/login` jika mengakses halaman mana pun di bawah `/admin` (kecuali `/admin/login`).
+   - Mengalihkan admin yang sudah login ke `/admin` jika mereka membuka `/admin/login`.
+2. **[`app/admin/actions.js`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js)**:
+   - Menambahkan helper [`requireAdmin`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js#L10-L22) untuk memverifikasi autentikasi admin di sisi server.
+   - Menggunakan `requireAdmin` pada Server Action yang mengubah data (seperti `gantiPassword`) untuk memastikan aksi ditolak jika sesi belum login.
+3. **[`app/admin/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/page.jsx)**:
+   - Menghapus komponen `CatatanBelumAktif`.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. **Uji proteksi rute tanpa login**:
+   - Buka browser dalam mode Penyamaran (Incognito/Private).
+   - Buka `http://localhost:3000/admin` atau `http://localhost:3000/admin/password`.
+   - Pastikan halaman langsung dialihkan (*redirect*) ke `http://localhost:3000/admin/login`.
+3. **Uji akses setelah login**:
+   - Masuk dengan akun admin di `/admin/login`.
+   - Setelah login berhasil, halaman `/admin` dan `/admin/password` dapat diakses seperti biasa.
+   - Buka kembali `http://localhost:3000/admin/login` saat masih login, pastikan otomatis dialihkan ke `/admin`.
+4. **Uji proteksi Server Action**:
+   - Jika sesi kedaluwarsa atau belum login, pemanggilan Server Action pengubah data (misalnya ganti password) akan ditolak dengan pesan: *"Anda harus masuk terlebih dahulu sebagai admin."**
+
+## US-07 List produk di halaman admin dari database
+
+**Prompt:Baca docs/user-stories.md bagian US-07 dan AGENTS.md.
+
+Ubah app/admin/page.jsx supaya menampilkan daftar semua produk dari tabel "produk" di Supabase, diambil di sisi server memakai koneksi Supabase di lib/supabase.
+
+Tampilkan produk ke dalam tabel atau daftar yang sudah ada di halaman admin (nama, harga, kategori/stok jika ada) tanpa merusak layout. Jika data kosong, tampilkan pesan "Belum ada produk". Pastikan halaman ini tetap terproteksi login admin dan hapus komponen CatatanBelumAktif yang terkait US-07.**
+
+**Hasil:*Viewed page.jsx:1-22
+Viewed TabelProduk.jsx:1-47
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start server 3012 (`npm run start -- -p 3012`)
+Created test_admin_us07.js
+Ran command: Run test_admin_us07.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_admin_us07.js"`)
+Created test_admin_us07.js
+Created test_admin_us07.js
+Ran command: Run test_admin_us07.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_admin_us07.js"`)
+Ran command: Run test_admin_us07.js (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_admin_us07.js"`)
+Killed task Start server 3012
+
+Tugas implementasi **US-07 (List Produk di Admin)** telah selesai dikerjakan sesuai spesifikasi pada [docs/user-stories.md](file:///d:/creativehubtalent/katalog-umkm/docs/user-stories.md) dan aturan di [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Diubah
+
+- **[`app/admin/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/page.jsx)**:
+  - Diubah menjadi Server Component async yang mengambil semua data produk dari tabel `produk` di Supabase secara dinamis di sisi server menggunakan koneksi sesi dari [`lib/supabase/server.js`](file:///d:/creativehubtalent/katalog-umkm/lib/supabase/server.js).
+  - Memverifikasi login sesi admin di server (`supabase.auth.getUser()`); jika sesi tidak valid/belum login, langsung dialihkan ke `/admin/login`.
+  - Menghapus pemakaian data contoh (`produkContoh`).
+  - Menampilkan daftar produk ke dalam komponen [`TabelProduk`](file:///d:/creativehubtalent/katalog-umkm/components/TabelProduk.jsx) yang sudah ada (menampilkan foto, nama, kategori, harga rupiah, dan tombol aksi) tanpa mengubah atau merusak tata letak.
+  - Menampilkan teks `"Belum ada produk"` apabila tabel kosong.
+  - Memastikan komponen `CatatanBelumAktif` yang terkait dengan US-07 sudah terhapus.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. **Uji proteksi halaman**:
+   - Buka `http://localhost:3000/admin` di jendela private/incognito tanpa login.
+   - Halaman akan otomatis dialihkan ke `http://localhost:3000/admin/login`.
+3. **Uji daftar produk dari database**:
+   - Masuk melalui `/admin/login` dengan akun admin yang valid.
+   - Di halaman `/admin`, periksa tabel daftar produk:
+     - Produk yang tampil merupakan data asli dari tabel `produk` di Supabase (misalnya *MSI TITAN HX 18 AI*, dsb.).
+     - Tampilan tabel tetap rapi dan konsisten sesuai panduan desain.
+4. **Uji kondisi data kosong**:
+   - Jika semua data pada tabel `produk` dihapus sementara dari dashboard Supabase, halaman akan menampilkan tulisan *"Belum ada produk"*.*
 
 **Perbaikan:**
 
