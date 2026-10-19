@@ -349,52 +349,55 @@ Pedoman:
 - Deskripsikan kegunaan, keunggulan, dan daya tarik utama produk ini bagi pembeli.
 - Tulis langsung teks deskripsinya tanpa kalimat pembuka seperti "Tentu, ini deskripsinya" dan tanpa tanda kutip.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  const primaryModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  const candidateModels = Array.from(
+    new Set([primaryModel, "gemini-3.5-flash", "gemini-flash-latest", "gemini-3.8-flash"])
+  );
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  let lastError = null;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: promptText,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 300,
+  for (const model of candidateModels) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: promptText,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 300,
+          },
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok || data.error) {
-      return {
-        error:
-          data.error?.message ||
-          `Gagal menghubungi Gemini API (Status ${response.status}).`,
-      };
+      if (!response.ok || data.error) {
+        lastError = data.error?.message || `Gagal menghubungi Gemini API (Status ${response.status}).`;
+        continue;
+      }
+
+      const deskripsi = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      if (deskripsi) {
+        return { deskripsi };
+      }
+    } catch (err) {
+      lastError = err.message || "Terjadi kesalahan saat memproses permintaan AI.";
     }
-
-    const deskripsi = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-
-    if (!deskripsi) {
-      return { error: "AI tidak menghasilkan respons. Silakan coba lagi." };
-    }
-
-    return { deskripsi };
-  } catch (err) {
-    return { error: err.message || "Terjadi kesalahan saat memproses permintaan AI." };
   }
+
+  return { error: lastError || "AI tidak menghasilkan respons. Silakan coba lagi." };
 }
 

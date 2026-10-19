@@ -4,10 +4,24 @@ import { useEffect } from "react";
 
 export default function PWARegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
-      });
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const registerSW = () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            console.log("Service Worker registered with scope:", reg.scope);
+          })
+          .catch((err) => {
+            console.warn("Service Worker registration failed:", err);
+          });
+      };
+
+      if (document.readyState === "complete") {
+        registerSW();
+      } else {
+        window.addEventListener("load", registerSW);
+        return () => window.removeEventListener("load", registerSW);
+      }
     }
   }, []);
 
