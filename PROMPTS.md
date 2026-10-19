@@ -110,9 +110,99 @@ Tugas implementasi **US-01 (Katalog dari database)** telah selesai dikerjakan se
 
 ## US-02 Detail produk
 
-**Prompt:**
+**Prompt:*Baca docs/user-stories.md bagian US-02.
 
-**Hasil:**
+Ubah app/produk/[id]/page.jsx supaya mengambil satu produk dari tabel "produk" di Supabase berdasarkan id di URL, di sisi server, memakai koneksi Supabase yang sudah dibuat di lib/supabase. Kalau produk tidak ditemukan, panggil notFound(). Jangan ubah tampilannya. Hapus CatatanBelumAktif dari halaman ini, tapi biarkan tombol WhatsApp.*
+
+**Hasil:*Viewed page.jsx:1-41
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start server for testing (`npm run start -- -p 3006`)
+Ran command: Test /produk/1 and /produk/9999 (`powershell -Command "
+$res = Invoke-WebRequest -Uri 'http://localhost:3006/produk/1'
+Write-Host 'Status for /produk/1:' $res.StatusCode
+Write-Host 'Contains Kopi Bubuk:' ($res.Content.Contains('Kopi Bubuk Robusta'))
+try {
+  $res2 = Invoke-WebRequest -Uri 'http://localhost:3006/produk/9999'
+  Write-Host 'Status for /produk/9999:' $res2.StatusCode
+} catch {
+  Write-Host 'Status for /produk/9999:' $_.Exception.Response.StatusCode
+}
+"`)
+Ran command: Run node fetch check (`node -e "
+async function check() {
+  const r1 = await fetch('http://localhost:3006/produk/1');
+  const t1 = await r1.text();
+  console.log('Status /produk/1:', r1.status);
+  console.log('Found Kopi Bubuk in /produk/1:', t1.includes('Kopi Bubuk Robusta'));
+  
+  const r2 = await fetch('http://localhost:3006/produk/9999');
+  console.log('Status /produk/9999:', r2.status);
+
+  const r3 = await fetch('http://localhost:3006/produk/abc');
+  console.log('Status /produk/abc:', r3.status);
+}
+check();
+"`)
+Ran command: Inspect /produk/1 content (`node -e "
+async function check() {
+  const r1 = await fetch('http://localhost:3006/produk/1');
+  const t1 = await r1.text();
+  console.log(t1.slice(0, 500));
+}
+check();
+"`)
+Ran command: Verify elements in /produk/1 (`node -e "
+async function check() {
+  const r1 = await fetch('http://localhost:3006/produk/1');
+  const t1 = await r1.text();
+  console.log('Has Robusta:', t1.includes('Robusta'));
+  console.log('Has kopi.svg:', t1.includes('/produk/kopi.svg'));
+  console.log('Has 45.000:', t1.includes('45.000'));
+  console.log('Has CatatanBelumAktif:', t1.includes('CatatanBelumAktif') || t1.includes('Tombol pesan belum berfungsi'));
+}
+check();
+"`)
+Ran command: Inspect product 1 in database (`node -e "
+const { createClient } = require('@supabase/supabase-js');
+const client = createClient('https://aepcdgqgrhkhyfpjofqa.supabase.co', 'sb_secret_HZBPn25pgrBJZvU6TmFIBw_1TkkO9JJ');
+client.from('produk').select('*').eq('id', 1).single().then(r => console.log(r.data));
+"`)
+Ran command: Verify fetched content (`node -e "
+async function check() {
+  const r1 = await fetch('http://localhost:3006/produk/1');
+  const t1 = await r1.text();
+  console.log('Has MSI TITAN:', t1.includes('MSI TITAN'));
+  console.log('Has 45.000.000:', t1.includes('45.000.000'));
+}
+check();
+"`)
+Killed task Start server for testing
+
+Tugas implementasi **US-02 (Detail produk)** telah selesai dikerjakan sesuai spesifikasi pada [docs/user-stories.md](file:///d:/creativehubtalent/katalog-umkm/docs/user-stories.md) dan aturan pada [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Diubah
+
+- **[`app/produk/[id]/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/produk/%5Bid%5D/page.jsx)**:
+  - Mengambil data produk dari tabel `produk` di Supabase berdasarkan parameter `id` URL di sisi server menggunakan koneksi dari [`lib/supabase`](file:///d:/creativehubtalent/katalog-umkm/lib/supabase/server.js).
+  - Menghapus pemakaian data contoh (`cariProdukContoh`).
+  - Memanggil `notFound()` jika produk tidak ditemukan di database atau jika ID tidak valid.
+  - Menghapus komponen `CatatanBelumAktif` dan mempertahankan komponen [`TombolWhatsApp`](file:///d:/creativehubtalent/katalog-umkm/components/TombolWhatsApp.jsx).
+  - Mempertahankan tampilan dan tata letak halaman sesuai desain yang sudah ada.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan server pengembangan lokal (jika belum berjalan):
+   ```bash
+   npm run dev
+   ```
+2. Buka salah satu halaman detail produk, misalnya `http://localhost:3000/produk/1`:
+   - Pastikan data yang tampil (nama, harga, kategori, deskripsi, foto) berasal langsung dari database Supabase.
+   - Pastikan komponen `CatatanBelumAktif` sudah hilang dan tombol WhatsApp tetap ada.
+3. Buka halaman produk dengan ID yang tidak ada, misalnya `http://localhost:3000/produk/9999` atau `http://localhost:3000/produk/abc`:
+   - Pastikan halaman beralih ke halaman 404 (*"Halaman tidak ditemukan"*).*
 
 **Perbaikan:**
 
