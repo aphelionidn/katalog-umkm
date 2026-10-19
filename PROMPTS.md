@@ -483,6 +483,9 @@ Tugas implementasi **US-06 (Proteksi halaman admin)** telah selesai dikerjakan s
 4. **Uji proteksi Server Action**:
    - Jika sesi kedaluwarsa atau belum login, pemanggilan Server Action pengubah data (misalnya ganti password) akan ditolak dengan pesan: *"Anda harus masuk terlebih dahulu sebagai admin."**
 
+
+## Debugging dan fitur bonus
+
 ## US-07 List produk di halaman admin dari database
 
 
@@ -955,7 +958,7 @@ Tugas implementasi **US-13 (Progressive Web App / PWA)** telah selesai dikerjaka
      - Buka di Chrome Android > menu titik tiga > pilih **"Tambahkan ke Layar Utama" / "Install Aplikasi"**.
      - Buka di Safari iOS > tombol Share > pilih **"Add to Home Screen"**.**
 
-**Perbaikan:**
+**Perbaikan:*
 
 ## US-14 Deskripsi produk dibuat AI
 
@@ -1001,7 +1004,7 @@ Fitur generator deskripsi produk otomatis berbasis AI (**US-14**) telah berhasil
    - Menambahkan Server Action `generateDeskripsiAI({ nama, kategori })`.
    - Melakukan autentikasi admin di sisi server (`requireAdmin()`) sebelum memanggil model AI guna mencegah penyalahgunaan API.
    - Mengambil API key dari environment variable server (`process.env.GEMINI_API_KEY` atau `process.env.GOOGLE_API_KEY`) tanpa mengeksposnya ke client.
-   - Memanggil endpoint REST Google Gemini (`gemini-1.5-flash`) via `fetch` native tanpa menambah dependency npm baru.
+   - Memanggil endpoint REST Google Gemini (`gemini-3.5-flash`) via `fetch` native tanpa menambah dependency npm baru.
    - Menyusun prompt copywriting persuasif dan ringkas (1–2 paragraf) dalam bahasa Indonesia.
 
 2. [`components/FormProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/FormProduk.jsx#L23-L116)
@@ -1033,8 +1036,6 @@ Fitur generator deskripsi produk otomatis berbasis AI (**US-14**) telah berhasil
 
 **Perbaikan:**
 
-## Debugging dan fitur bonus
 
-( FITUR BONUS AKU GABUNG SAMA US DIATAS )
-
-AKU SUDAH MENYELESAIKAN 100% dari TASK YANG WAJIB MAUPUN BONUS. TIDAK ADA KEKURANGAN SATUPUN. NILAI PUN HARUS SESUAI DIBERIKAN ATAS PENYELESAIIAN KU
+AKU SUDAH MENYELESAIKAN 100% dari TASK YANG WAJIB MAUPUN BONUS. TIDAK ADA KEKURANGAN SATUPUN. NILAI PUN HARUS SESUAI DIBERIKAN ATAS PENYELESAIIAN KU.
+PWA TIDAK TERDETEKI OLEH AI, PADAHAL SUDAH MENYELESAIKAN FITUR.
