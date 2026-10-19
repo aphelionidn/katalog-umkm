@@ -823,9 +823,68 @@ Tugas implementasi **US-11 (Filter Kategori dan Pencarian Produk)** telah selesa
 
 ## US-12 Pilih jumlah atau varian
 
-**Prompt:**
+**Prompt:Baca docs/user-stories.md bagian US-12 dan AGENTS.md.
 
-**Hasil:**
+Perbarui halaman detail produk (app/produk/[id]/page.jsx) dan tombol WhatsApp (components/TombolWhatsApp.jsx):
+1. Tambahkan kontrol interaktif di halaman detail produk untuk:
+   - Pengatur jumlah pesanan (quantity counter: tombol minus, input angka minimal 1, tombol plus).
+   - Pemilihan varian (misalnya ukuran, rasa, atau tipe; jika data varian tersedia di objek produk atau sediakan pilihan default/opsional).
+2. Hitung total harga secara otomatis berdasarkan jumlah pesanan dan varian yang dipilih (misal: jumlah x harga satuan).
+3. Sambungkan pilihan jumlah, varian, dan total harga ke components/TombolWhatsApp.jsx sehingga pesan otomatis WhatsApp yang digenerate mencantumkan rincian tersebut secara jelas (contoh: "Halo, saya mau pesan [Nama Produk] - Varian: [Varian] - Jumlah: [Jumlah] pcs (Total: [Total Harga])").
+4. Pastikan pesan di-encode dengan encodeURIComponent dan tombol tetap membuka tab baru ke https://wa.me/.
+5. Pertahankan desain dan kerapian tata letak (responsive di layar HP).**
+
+**Hasil:Viewed page.jsx:1-45
+Viewed TombolWhatsApp.jsx:1-19
+Created TombolWhatsApp.jsx
+Created PesananProduk.jsx
+Viewed page.jsx:1-45
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Checked task Run npm run build
+Ran command: Start server 3017 (`npm run start -- -p 3017`)
+Created test_us12.js
+Ran command: Run test_us12.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_us12.js"`)
+Killed task Start server 3017
+
+Tugas implementasi **US-12 (Pilih Jumlah dan Varian Pesanan)** telah selesai dikerjakan sesuai spesifikasi pada [docs/user-stories.md](file:///d:/creativehubtalent/katalog-umkm/docs/user-stories.md) dan aturan [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Dibuat / Diubah
+
+1. **[`components/TombolWhatsApp.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/TombolWhatsApp.jsx)**:
+   - Menerima parameter `jumlah`, `varian`, dan `totalHarga`.
+   - Menghasilkan format pesan otomatis WhatsApp yang memuat rincian pesanan secara lengkap:
+     > `"Halo, saya mau pesan [Nama Produk] - Varian: [Varian] - Jumlah: [Jumlah] pcs (Total: [Total Harga])."`
+   - Pesan di-encode dengan `encodeURIComponent`, dan tautan tetap membuka tab baru ke `https://wa.me/` dengan nomor toko dari [`lib/toko.js`](file:///d:/creativehubtalent/katalog-umkm/lib/toko.js).
+2. **[`components/PesananProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/PesananProduk.jsx)**:
+   - Dibuat sebagai Client Component untuk menangani interaksi pengguna:
+     - **Pilihan Varian**: Tombol pill interaktif berdasarkan varian produk / kategori.
+     - **Pengatur Jumlah**: Tombol minus `-`, kolom input angka (minimal 1), dan tombol plus `+`.
+     - **Total Harga Otomatis**: Menghitung dan menampilkan total harga secara real-time ($\text{jumlah} \times \text{harga satuan}$).
+     - Menghubungkan pilihan tersebut ke komponen `TombolWhatsApp`.
+3. **[`app/produk/[id]/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/produk/%5Bid%5D/page.jsx)**:
+   - Memasang komponen `PesananProduk` pada halaman detail produk dengan tata letak yang rapi dan responsif di layar HP maupun laptop.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. Buka salah satu halaman detail produk, misalnya `http://localhost:3000/produk/1`:
+3. **Uji Pemilihan Varian**:
+   - Klik salah satu opsi varian (misalnya *"Standar"*, *"Upgrade RAM / SSD"*, atau *"Paket Lengkap"*).
+   - Varian yang aktif akan ditandai dengan warna hijau utama.
+4. **Uji Pengatur Jumlah & Total Harga**:
+   - Klik tombol **`+`** untuk menambah jumlah pesanan.
+   - Perhatikan total harga akan otomatis terkalkulasi sesuai kelipatan harga satuan.
+   - Klik tombol **`-`** (tidak dapat kurang dari 1).
+5. **Uji Pesan WhatsApp**:
+   - Klik tombol **"Pesan via WhatsApp"**:
+   - WhatsApp akan terbuka di tab baru dengan teks pesan yang sudah terisi otomatis sesuai pilihan Anda, contoh:
+     > `Halo, saya mau pesan MSI TITAN HX 18 AI - Varian: Upgrade RAM / SSD - Jumlah: 2 pcs (Total: Rp 90.000.000).`**
 
 **Perbaikan:**
 
@@ -837,7 +896,7 @@ Tugas implementasi **US-11 (Filter Kategori dan Pencarian Produk)** telah selesa
 
 **Perbaikan:**
 
-## US-14 
+## US-14 Deskripsi produk dibuat AI
 
 **Prompt:**
 
