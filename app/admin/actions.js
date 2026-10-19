@@ -312,3 +312,87 @@ export async function hapusProduk(arg1, arg2) {
   revalidatePath("/admin", "page");
   redirect("/admin?sukses=" + encodeURIComponent("Produk berhasil dihapus."));
 }
+
+/**
+ * Server Action untuk menghasilkan deskripsi produk otomatis menggunakan Google Gemini API.
+ */
+export async function generateDeskripsiAI({ nama, kategori }) {
+  // Wajib periksa sesi login admin di sisi server sebelum generate
+  try {
+    await requireAdmin();
+  } catch {
+    return { error: "Operasi ditolak: Anda harus login sebagai admin." };
+  }
+
+  if (!nama || !nama.trim()) {
+    return { error: "Nama produk harus diisi terlebih dahulu." };
+  }
+
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+
+  if (!apiKey) {
+    return {
+      error:
+        "GEMINI_API_KEY belum dikonfigurasi di environment variable (.env.local). Silakan tambahkan GEMINI_API_KEY.",
+    };
+  }
+
+  const promptText = `Anda adalah seorang copywriter ahli untuk toko online dan UMKM. 
+Buat deskripsi produk yang menarik, persuasif, ringkas (1-2 paragraf), dan relevan dalam Bahasa Indonesia untuk produk berikut:
+- Nama Produk: ${nama.trim()}
+${kategori?.trim() ? `- Kategori: ${kategori.trim()}` : ""}
+
+Pedoman:
+- Deskripsikan kegunaan, keunggulan, dan daya tarik utama produk ini bagi pembeli.
+- Tulis langsung teks deskripsinya tanpa kalimat pembuka seperti "Tentu, ini deskripsinya" dan tanpa tanda kutip.`;
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: promptText,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 300,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      return {
+        error:
+          data.error?.message ||
+          `Gagal menghubungi Gemini API (Status ${response.status}).`,
+      };
+    }
+
+    const deskripsi = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!deskripsi) {
+      return { error: "AI tidak menghasilkan respons. Silakan coba lagi." };
+    }
+
+    return { deskripsi };
+  } catch (err) {
+    return { error: err.message || "Terjadi kesalahan saat memproses permintaan AI." };
+  }
+}
+
