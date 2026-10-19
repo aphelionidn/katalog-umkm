@@ -970,7 +970,66 @@ Tambahkan fitur generator deskripsi produk otomatis berbasis AI di form admin (t
 6. Masukkan hasil teks deskripsi dari AI langsung ke dalam textarea deskripsi sehingga admin tetap bisa membaca, mengedit, atau menyempurnakannya sebelum menyimpan produk.
 7. Tangani error dengan baik (tampilkan pesan error jika API gagal atau limit habis) tanpa merusak form atau layout admin.**
 
-**Hasil:**
+**Hasil:Viewed .env.example:1-14
+Viewed .env.local:1-2
+Ran command: Check AI env vars (`node -e "console.log(Object.keys(process.env).filter(k => k.includes('GEMINI') || k.includes('GOOGLE') || k.includes('AI') || k.includes('API_KEY')))"`)
+Viewed actions.js:300-315
+Edited actions.js
+Viewed FormProduk.jsx:1-49
+Created FormProduk.jsx
+Viewed .env.example:1-14
+Edited .env.example
+Viewed FormProduk.jsx:1-60
+Viewed FormProduk.jsx:61-129
+Viewed actions.js:190-250
+Viewed actions.js:300-399
+Viewed page.jsx:1-3
+Viewed page.jsx:1-39
+Viewed FormUbahProduk.jsx:1-21
+Viewed page.jsx:1-3
+Viewed page.jsx:1-24
+Ran command: Build application (`npm run build`)
+Viewed .env.example:1-18
+
+Fitur generator deskripsi produk otomatis berbasis AI (**US-14**) telah berhasil diimplementasikan dan diverifikasi dengan `npm run build`.
+
+---
+
+### File yang Diubah & Ditambahkan
+
+1. [`app/admin/actions.js`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js#L316-L397)
+   - Menambahkan Server Action `generateDeskripsiAI({ nama, kategori })`.
+   - Melakukan autentikasi admin di sisi server (`requireAdmin()`) sebelum memanggil model AI guna mencegah penyalahgunaan API.
+   - Mengambil API key dari environment variable server (`process.env.GEMINI_API_KEY` atau `process.env.GOOGLE_API_KEY`) tanpa mengeksposnya ke client.
+   - Memanggil endpoint REST Google Gemini (`gemini-1.5-flash`) via `fetch` native tanpa menambah dependency npm baru.
+   - Menyusun prompt copywriting persuasif dan ringkas (1–2 paragraf) dalam bahasa Indonesia.
+
+2. [`components/FormProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/FormProduk.jsx#L23-L116)
+   - Mengubah form menjadi client component dengan state untuk `nama`, `kategori`, dan `deskripsi`.
+   - Menambahkan tombol **`✨ Buat Deskripsi dengan AI`** tepat di atas textarea deskripsi.
+   - Menyediakan indikator loading (`"Sedang membuat deskripsi..."` dan tombol disabled saat proses berlangsung).
+   - Menangani error secara aman (peringatan jika nama produk belum diisi, jika API key belum ada, atau jika kuota habis).
+   - Memasukkan teks hasil generasi AI langsung ke dalam textarea sehingga admin dapat membaca atau menyuntingnya sebelum menyimpan produk.
+   - Komponen ini otomatis digunakan oleh form tambah ([`app/admin/tambah/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/tambah/page.jsx)) dan form edit ([`app/admin/produk/[id]/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/produk/[id]/page.jsx)).
+
+3. [`.env.example`](file:///d:/creativehubtalent/katalog-umkm/.env.example#L15-L17)
+   - Menambahkan dokumentasi variabel `GEMINI_API_KEY` untuk server.
+
+---
+
+### Cara Menguji
+
+1. Tambahkan Gemini API key ke `.env.local`:
+   ```env
+   GEMINI_API_KEY=AIzaSy...
+   ```
+2. Jalankan aplikasi:
+   ```bash
+   npm run dev
+   ```
+3. Buka halaman admin tambah produk di `http://localhost:3000/admin/tambah` atau halaman edit produk di `http://localhost:3000/admin/produk/[id]`.
+4. Isi **Nama produk** (dan opsional **Kategori**).
+5. Klik tombol **`✨ Buat Deskripsi dengan AI`**. Teks deskripsi yang dihasilkan AI akan terisi otomatis ke textarea dan dapat diedit sebelum menekan tombol **Simpan**.**
 
 **Perbaikan:**
 
