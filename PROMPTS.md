@@ -695,11 +695,133 @@ Buat fitur hapus produk di halaman admin:
 5. Setelah produk berhasil dihapus, panggil revalidatePath('/', 'page') dan revalidatePath('/admin', 'page') agar daftar produk terbarukan secara otomatis, lalu tampilkan notifikasi berhasil. Tampilkan pesan error jika proses gagal.
 6. Pertahankan style layout admin yang sudah ada dan hapus komponen CatatanBelumAktif yang terkait US-10.**
 
-**Hasil:**
+**Hasil:Viewed TabelProduk.jsx:1-47
+Ran command: Search CatatanBelumAktif (`Get-ChildItem -Recurse -File -Path app\admin, components | Select-String "CatatanBelumAktif"`)
+Viewed page.jsx:1-63
+Created actions.js
+Created TombolHapus.jsx
+Created TabelProduk.jsx
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Checked task Run npm run build
+Ran command: Start test server (`npm run start -- -p 3015`)
+Created test_hapus.js
+Ran command: Run test_hapus.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_hapus.js"`)
+Killed task Start test server
+
+Tugas implementasi **US-10 (Hapus Produk)** telah selesai dikerjakan sesuai spesifikasi dan aturan keamanan di [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Dibuat / Diubah
+
+1. **[`app/admin/actions.js`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js)**:
+   - Menambahkan Server Action [`hapusProduk`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js#L260-L315).
+   - Memeriksa autentikasi sesi admin di sisi server menggunakan `requireAdmin()` sebelum mengeksekusi operasi `DELETE` ke tabel `produk`. Aksi ditolak jika tidak terautentikasi.
+   - Menjalankan penghapusan baris produk di tabel `produk` Supabase berdasarkan `id`.
+   - Memanggil `revalidatePath('/', 'page')` dan `revalidatePath('/admin', 'page')` agar daftar produk langsung terbarukan, lalu mengalihkan pengguna kembali ke `/admin?sukses=...` (atau menampilkan pesan error jika gagal).
+2. **[`components/TombolHapus.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/TombolHapus.jsx)**:
+   - Dibuat sebagai komponen Client Component yang menampilkan tombol **"Hapus"** dengan varian warna bahaya (`varian="bahaya"`).
+   - Menampilkan dialog konfirmasi browser (`window.confirm("Apakah Anda yakin ingin menghapus produk ini?")`) saat tombol diklik. Jika pengguna menekan "Batal", operasi hapus dibatalkan (`e.preventDefault()`).
+3. **[`components/TabelProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/TabelProduk.jsx)**:
+   - Memasang komponen `TombolHapus` pada setiap baris produk di kolom aksi tanpa merusak struktur dan layout tabel yang sudah ada.
+4. **[`app/admin/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/page.jsx)**:
+   - Menampilkan notifikasi sukses hijau atau pesan error merah dari URL query parameter jika proses penghapusan selesai atau mengalami kendala.
+   - Memastikan tidak ada sisa komponen `CatatanBelumAktif` terkait US-10.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. Pastikan sudah login di `/admin/login`, lalu buka halaman `/admin`.
+3. **Uji Konfirmasi Batal**:
+   - Klik tombol **"Hapus"** pada salah satu produk.
+   - Kotak dialog browser akan muncul: *"Apakah Anda yakin ingin menghapus produk [nama]?"*.
+   - Klik **"Cancel"** / **"Batal"**: produk tidak akan terhapus dan halaman tidak mengalami perubahan.
+4. **Uji Hapus Berhasil**:
+   - Klik tombol **"Hapus"** lagi, lalu klik **"OK"**:
+     - Server Action `hapusProduk` akan dijalankan di server Supabase.
+     - Halaman akan memuat ulang daftar produk otomatis dengan notifikasi hijau: *"Produk berhasil dihapus."*
+     - Produk yang dihapus otomatis hilang dari halaman admin (`/admin`) dan katalog toko (`/`).**
 
 **Perbaikan:**
 
-## US-11
+## US-11 Filter kategori atau pencarian
+
+**Prompt:Baca docs/user-stories.md bagian US-11 dan AGENTS.md.
+
+Buat fitur pencarian dan filter kategori produk di halaman katalog publik (app/page.jsx):
+1. Tambahkan komponen input pencarian (berdasarkan nama atau deskripsi produk) dan tombol/dropdown filter kategori di atas daftar produk pada app/page.jsx.
+2. Manfaatkan query parameter URL (misalnya ?q=... dan ?kategori=...) agar filter dan pencarian dapat di-bookmark atau di-share dengan mudah.
+3. Ambil data produk dari Supabase di sisi server dengan menerapkan filter sesuai query parameter yang aktif (gunakan klausa ilike untuk kata kunci pencarian dan eq untuk kategori jika dipilih).
+4. Ambil daftar kategori unik dari tabel "produk" atau tampilkan opsi kategori yang tersedia secara dinamis. Tambahkan opsi "Semua" untuk mereset filter.
+5. Jika hasil pencarian atau filter tidak ditemukan, tampilkan pesan informatif yang ramah (misalnya "Produk tidak ditemukan untuk pencarian ini").
+6. Pertahankan desain dan layout katalog yang sudah ada, serta pastikan tidak merusak komponen kartu produk.**
+
+**Hasil:Viewed page.jsx:1-62
+Created test_query.js
+Ran command: Run query test (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_query.js"`)
+Created test_query.js
+Ran command: Run test_query.js (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_query.js"`)
+Created test_query.js
+Ran command: Run test_query.js (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_query.js"`)
+Created test_query.js
+Ran command: Run combined query test (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_query.js"`)
+Created test_categories.js
+Ran command: Run test_categories.js (`$env:NODE_PATH="D:\creativehubtalent\katalog-umkm\node_modules"; node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_categories.js"`)
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start test server (`npm run start -- -p 3016`)
+Created test_search.js
+Ran command: Run test_search.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_search.js"`)
+Killed task Start test server
+
+Tugas implementasi **US-11 (Filter Kategori dan Pencarian Produk)** telah selesai dikerjakan sesuai spesifikasi pada [docs/user-stories.md](file:///d:/creativehubtalent/katalog-umkm/docs/user-stories.md) dan aturan [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Diubah
+
+- **[`app/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/page.jsx)**:
+  - Mengambil parameter URL pencarian (`q`) dan filter kategori (`kategori`) melalui `searchParams` di Server Component.
+  - Mengambil daftar kategori unik secara dinamis dari tabel `produk` di Supabase.
+  - Memfilter data produk di sisi server:
+    - Menggunakan klausa `.or("nama.ilike.%q%,deskripsi.ilike.%q%")` untuk mencari kecocokan pada nama atau deskripsi produk.
+    - Menggunakan klausa `.eq("kategori", kategori)` saat kategori tertentu dipilih.
+  - Menyediakan form pencarian dengan tombol **"Cari"** dan tombol **"Reset"** jika filter sedang aktif.
+  - Menyediakan tombol filter kategori berbentuk pill (*chips*) dinamis termasuk opsi **"Semua"** untuk mereset kategori.
+  - Menampilkan pesan informatif ramah: *"Produk tidak ditemukan untuk pencarian ini"* beserta tombol *"Lihat semua produk"* apabila pencarian/filter tidak menghasilkan produk.
+  - Mempertahankan tata letak katalog 2 kolom di mobile dan 3 kolom di desktop serta komponen [`KartuProduk`](file:///d:/creativehubtalent/katalog-umkm/components/KartuProduk.jsx) tanpa mengubah tampilannya.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. Buka `http://localhost:3000/`:
+   - Semua kategori unik yang ada di database akan tampil sebagai tombol pill di atas kartu produk.
+3. **Uji Pencarian Kata Kunci**:
+   - Masukkan kata kunci (misalnya `titan` atau `laptop`) ke kotak pencarian lalu klik **"Cari"**:
+     - URL berubah menjadi `http://localhost:3000/?q=...`.
+     - Hanya produk dengan nama atau deskripsi yang mengandung kata kunci tersebut yang akan ditampilkan.
+4. **Uji Filter Kategori**:
+   - Klik salah satu pill kategori (misalnya `Laptop`, `Camilan`, atau `Bumbu`):
+     - URL berubah menjadi `http://localhost:3000/?kategori=...`.
+     - Hanya produk dalam kategori tersebut yang tampil.
+   - Klik opsi **"Semua"** untuk melihat seluruh kategori kembali.
+5. **Uji Kombinasi Pencarian & Filter**:
+   - Pilih suatu kategori dan masukkan kata kunci pencarian sekaligus:
+     - URL menjadi `http://localhost:3000/?q=...&kategori=...` dan dapat di-copy/share/bookmark.
+6. **Uji Produk Tidak Ditemukan**:
+   - Masukkan kata kunci acak (misal `xyz123`):
+     - Muncul pesan ramah: *"Produk tidak ditemukan untuk pencarian ini."* beserta tombol *"Lihat semua produk"*.**
+
+**Perbaikan:**
+
+## US-12 Pilih jumlah atau varian
 
 **Prompt:**
 
@@ -707,7 +829,7 @@ Buat fitur hapus produk di halaman admin:
 
 **Perbaikan:**
 
-## US-12 
+## US-13 Bisa di-install di HP (PWA)
 
 **Prompt:**
 
@@ -715,15 +837,7 @@ Buat fitur hapus produk di halaman admin:
 
 **Perbaikan:**
 
-## US-13
-
-**Prompt:**
-
-**Hasil:**
-
-**Perbaikan:**
-
-## US-14
+## US-14 
 
 **Prompt:**
 
