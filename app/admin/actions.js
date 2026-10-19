@@ -5,6 +5,23 @@ import { revalidatePath } from "next/cache";
 import { createSessionClient } from "@/lib/supabase/server";
 
 /**
+ * Helper untuk memastikan admin sudah login sebelum menjalankan aksi yang mengubah data.
+ */
+export async function requireAdmin() {
+  const supabase = await createSessionClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Anda harus masuk terlebih dahulu sebagai admin.");
+  }
+
+  return { supabase, user };
+}
+
+/**
  * Server Action untuk login admin memakai Supabase Auth (email dan password).
  */
 export async function login(prevState, formData) {
@@ -75,15 +92,8 @@ export async function gantiPassword(prevState, formData) {
       return { error: "Konfirmasi password tidak sama dengan password baru." };
     }
 
-    const supabase = await createSessionClient();
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return { error: "Anda harus masuk terlebih dahulu sebagai admin." };
-    }
+    // Memeriksa bahwa admin sudah login di server
+    const { supabase } = await requireAdmin();
 
     const { error: updateError } = await supabase.auth.updateUser({
       password: passwordBaru,

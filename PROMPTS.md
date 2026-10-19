@@ -430,7 +430,9 @@ Tugas implementasi **US-05 (Ganti password)** telah selesai dikerjakan sesuai sp
 
 ## US-06 Proteksi halaman admin
 
-**Prompt:**
+**Prompt:Baca AGENTS.md aturan keamanan nomor 3 dan 4, dan docs/user-stories.md bagian US-06.
+
+Buat file proxy.js di root proyek (Next.js 16). Semua rute /admin kecuali /admin/login wajib login dengan Supabase Auth; kalau belum login, alihkan ke /admin/login. Pastikan juga setiap Server Action yang mengubah data memeriksa login di server. Hapus CatatanBelumAktif dari halaman /admin.**
 
 **Hasil:**
 
