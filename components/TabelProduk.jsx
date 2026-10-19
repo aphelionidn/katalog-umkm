@@ -28,9 +28,9 @@ export default function TabelProduk({ daftarProduk }) {
               <td className="px-4 py-3">{formatRupiah(produk.harga)}</td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">
-                  {/* US-09 dan US-10 (bonus): ubah dan hapus produk */}
+                  {/* US-09 dan US-10 (bonus): edit dan hapus produk */}
                   <Tombol href={`/admin/produk/${produk.id}/ubah`} varian="garis">
-                    Ubah
+                    Edit
                   </Tombol>
                   <Tombol type="button" varian="bahaya">
                     Hapus

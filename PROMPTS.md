@@ -609,11 +609,77 @@ Tugas implementasi **US-08 (Tambah Produk di Admin)** telah selesai dikerjakan s
 
 **Perbaikan:**
 
-## US-09
+## US-09 Ubah produk (harus terkunci login)
 
-**Prompt:**
+**Prompt:Baca docs/user-stories.md bagian US-09 dan AGENTS.md (khususnya aturan mutasi data dan proteksi keamanan).
 
-**Hasil:**
+Buat fitur edit/ubah produk di halaman admin:
+1. Buat halaman form edit di app/admin/produk/[id]/page.jsx (atau sesuaikan dengan struktur rute admin yang ada). Halaman ini mengambil data produk terkait dari Supabase di sisi server untuk mengisi nilai awal (default value) form: nama, harga, deskripsi, kategori, dan gambar.
+2. Tambahkan tombol atau tautan "Edit" pada setiap baris produk di app/admin/page.jsx yang mengarahkan ke halaman edit produk terkait.
+3. Buat Server Action untuk update data produk di app/admin/actions.js. Wajib verifikasi sesi/login admin di server sebelum melakukan update ke tabel "produk". Tolak jika tidak terautentikasi.
+4. Lakukan validasi input di server (nama dan harga wajib diisi, harga harus berupa angka positif).
+5. Setelah update berhasil, lakukan revalidatePath untuk '/', '/admin', dan '/produk/[id]', lalu alihkan kembali ke /admin dengan notifikasi sukses. Tampilkan pesan error jika gagal.
+6. Pertahankan desain dan layout admin yang sudah ada, serta hapus komponen CatatanBelumAktif yang terkait US-09.**
+
+**Hasil:Viewed page.jsx:1-25
+Viewed actions.js:1-176
+Created actions.js
+Viewed FormProduk.jsx:1-48
+Created FormProduk.jsx
+Created FormUbahProduk.jsx
+Created page.jsx
+Created page.jsx
+Created TabelProduk.jsx
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start test server (`npm run start -- -p 3014`)
+Created test_edit.js
+Ran command: Run test_edit.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_edit.js"`)
+Killed task Start test server
+
+Tugas implementasi **US-09 (Edit / Ubah Produk)** telah selesai dikerjakan sesuai spesifikasi dan aturan keamanan di [AGENTS.md](file:///d:/creativehubtalent/katalog-umkm/AGENTS.md).
+
+### File yang Dibuat / Diubah
+
+1. **[`app/admin/actions.js`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js)**:
+   - Menambahkan Server Action [`ubahProduk`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js#L182-L255) (juga diekspor sebagai `editProduk`).
+   - Wajib memverifikasi sesi autentikasi admin di sisi server menggunakan `requireAdmin()` sebelum mengeksekusi update ke tabel `produk`.
+   - Melakukan validasi input di server: `id`, `nama`, dan `harga` wajib ada, serta `harga` harus berupa angka positif.
+   - Mengupdate baris produk di database Supabase berdasarkan `id`.
+   - Melakukan `revalidatePath("/")`, `revalidatePath("/admin")`, dan `revalidatePath("/produk/[id]")`, lalu mengalihkan pengguna kembali ke `/admin?sukses=...`.
+2. **[`components/FormProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/FormProduk.jsx)**:
+   - Menambahkan input tersembunyi (`<input type="hidden" name="id" defaultValue={produk.id} />`) untuk menyertakan ID produk saat form dikirimkan.
+   - Mengisi nilai bawaan (`defaultValue`) untuk seluruh kolom: `nama`, `harga`, `kategori`, `foto_url` (link foto / gambar), dan `deskripsi`.
+3. **[`components/FormUbahProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/FormUbahProduk.jsx)**:
+   - Komponen client yang menghubungkan `FormProduk` dengan Server Action `ubahProduk` menggunakan `useActionState`.
+4. **[`app/admin/produk/[id]/ubah/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/produk/%5Bid%5D/ubah/page.jsx)** & **[`app/admin/produk/[id]/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/produk/%5Bid%5D/page.jsx)**:
+   - Halaman Server Component yang mengambil data produk terkini dari Supabase berdasarkan parameter URL `id` secara dinamis.
+   - Memanggil `notFound()` jika produk tidak ditemukan.
+   - Menghapus komponen `CatatanBelumAktif`.
+   - Mendukung akses melalui rute `/admin/produk/[id]/ubah` maupun `/admin/produk/[id]`.
+5. **[`components/TabelProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/TabelProduk.jsx)**:
+   - Memastikan tombol aksi berlabel **"Edit"** pada setiap baris produk mengarah ke rute halaman edit produk terkait (`/admin/produk/[id]/ubah`).
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. Pastikan sudah login di `/admin/login`, lalu buka halaman `/admin`.
+3. Pada tabel daftar produk, klik tombol **"Edit"** di salah satu baris produk:
+   - Halaman form ubah produk akan terbuka dengan nilai awal (nama, harga, kategori, foto, deskripsi) yang terisi otomatis dari database Supabase.
+   - Komponen `CatatanBelumAktif` sudah tidak tampil.
+4. **Uji Validasi Form**:
+   - Kosongkan kolom nama atau ubah harga menjadi nilai negatif, lalu klik **"Simpan perubahan"**:
+     - Sistem akan menampilkan pesan error validasi di atas form.
+5. **Uji Simpan Perubahan**:
+   - Ubah salah satu data (misalnya mengubah harga atau deskripsi produk).
+   - Klik **"Simpan perubahan"**:
+     - Halaman otomatis kembali ke `/admin`.
+     - Muncul notifikasi hijau: *"Produk berhasil diperbarui."*
+     - Data yang diperbarui langsung tercermin pada tabel admin, halaman detail produk (`/produk/[id]`), dan katalog utama (`/`).**
 
 **Perbaikan:**
 

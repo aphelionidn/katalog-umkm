@@ -173,3 +173,84 @@ export async function tambahProduk(prevState, formData) {
   revalidatePath("/admin");
   redirect("/admin?sukses=" + encodeURIComponent("Produk berhasil ditambahkan."));
 }
+
+/**
+ * Server Action untuk memperbarui data produk di Supabase.
+ */
+export async function ubahProduk(prevState, formData) {
+  let productId;
+  try {
+    const data = formData instanceof FormData ? formData : prevState;
+    const idStr = data?.get?.("id")?.toString()?.trim();
+    const nama = data?.get?.("nama")?.toString()?.trim();
+    const hargaStr = data?.get?.("harga")?.toString()?.trim();
+    const kategori = data?.get?.("kategori")?.toString()?.trim() || null;
+    const deskripsi = data?.get?.("deskripsi")?.toString()?.trim() || null;
+    const foto_url =
+      (data?.get?.("foto_url") || data?.get?.("gambar"))?.toString()?.trim() || null;
+
+    if (!idStr) {
+      return { error: "ID produk tidak valid." };
+    }
+
+    const id = parseInt(idStr, 10);
+    if (isNaN(id)) {
+      return { error: "ID produk harus berupa angka." };
+    }
+    productId = id;
+
+    // Validasi input
+    if (!nama) {
+      return { error: "Nama produk wajib diisi." };
+    }
+
+    if (!hargaStr || isNaN(Number(hargaStr))) {
+      return { error: "Harga wajib diisi dengan angka." };
+    }
+
+    const harga = parseInt(hargaStr, 10);
+    if (harga < 0) {
+      return { error: "Harga harus berupa angka positif." };
+    }
+
+    // Verifikasi sesi admin di sisi server sebelum update
+    let supabase;
+    try {
+      const auth = await requireAdmin();
+      supabase = auth.supabase;
+    } catch {
+      return { error: "Operasi ditolak: Anda harus login sebagai admin." };
+    }
+
+    // Update produk di tabel "produk"
+    const { error: updateError } = await supabase
+      .from("produk")
+      .update({
+        nama,
+        harga,
+        kategori,
+        deskripsi,
+        foto_url,
+      })
+      .eq("id", productId);
+
+    if (updateError) {
+      return { error: `Gagal memperbarui produk: ${updateError.message}` };
+    }
+  } catch (err) {
+    if (err?.message === "NEXT_REDIRECT" || err?.digest?.startsWith?.("NEXT_REDIRECT")) {
+      throw err;
+    }
+    return { error: err.message || "Terjadi kesalahan saat memperbarui produk." };
+  }
+
+  // Revalidate rute katalog, admin, dan detail produk terkait
+  revalidatePath("/");
+  revalidatePath("/admin");
+  if (productId) {
+    revalidatePath(`/produk/${productId}`);
+  }
+  redirect("/admin?sukses=" + encodeURIComponent("Produk berhasil diperbarui."));
+}
+
+export const editProduk = ubahProduk;
