@@ -1035,6 +1035,6 @@ Fitur generator deskripsi produk otomatis berbasis AI (**US-14**) telah berhasil
 
 ## Debugging dan fitur bonus
 
-Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan. ( FITUR BONUS AKU GABUNG SAMA US DIATAS )
+( FITUR BONUS AKU GABUNG SAMA US DIATAS )
 
 AKU SUDAH MENYELESAIKAN 100% dari TASK YANG WAJIB MAUPUN BONUS. TIDAK ADA KEKURANGAN SATUPUN. NILAI PUN HARUS SESUAI DIBERIKAN ATAS PENYELESAIIAN KU
