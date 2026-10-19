@@ -7,7 +7,7 @@ export default function PWARegister() {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const registerSW = () => {
         navigator.serviceWorker
-          .register("/sw.js")
+          .register("/sw.js", { scope: "/" })
           .then((reg) => {
             console.log("Service Worker registered with scope:", reg.scope);
           })
