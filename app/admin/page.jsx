@@ -6,7 +6,10 @@ import { createSessionClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function HalamanAdmin() {
+export default async function HalamanAdmin({ searchParams }) {
+  const sp = await searchParams;
+  const pesanSukses = sp?.sukses || sp?.pesan;
+
   const supabase = await createSessionClient();
   const {
     data: { user },
@@ -38,6 +41,12 @@ export default async function HalamanAdmin() {
         {/* US-08 (bonus): tambah produk */}
         <Tombol href="/admin/produk/baru">Tambah produk</Tombol>
       </div>
+
+      {pesanSukses && (
+        <div className="rounded-lg border border-garis bg-permukaan p-3 text-sm font-medium text-utama">
+          {pesanSukses}
+        </div>
+      )}
 
       {errorMsg ? (
         <div className="rounded-xl border border-garis bg-permukaan p-4 text-bahaya">

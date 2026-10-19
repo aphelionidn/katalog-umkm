@@ -485,6 +485,7 @@ Tugas implementasi **US-06 (Proteksi halaman admin)** telah selesai dikerjakan s
 
 ## US-07 List produk di halaman admin dari database
 
+
 **Prompt:Baca docs/user-stories.md bagian US-07 dan AGENTS.md.
 
 Ubah app/admin/page.jsx supaya menampilkan daftar semua produk dari tabel "produk" di Supabase, diambil di sisi server memakai koneksi Supabase di lib/supabase.
@@ -534,6 +535,125 @@ Tugas implementasi **US-07 (List Produk di Admin)** telah selesai dikerjakan ses
      - Tampilan tabel tetap rapi dan konsisten sesuai panduan desain.
 4. **Uji kondisi data kosong**:
    - Jika semua data pada tabel `produk` dihapus sementara dari dashboard Supabase, halaman akan menampilkan tulisan *"Belum ada produk"*.*
+
+**Perbaikan:**
+
+## US-08 Tambah produk (harus terkunci login)
+
+**Prompt:Baca docs/user-stories.md bagian US-08 dan AGENTS.md (khususnya aturan keamanan mutasi data di server).
+
+Buat fitur tambah produk di halaman admin:
+1. Buat form tambah produk di app/admin/tambah/page.jsx (atau sesuaikan dengan struktur form admin yang sudah ada) dengan field: nama, harga, deskripsi, kategori, dan gambar. Pertahankan style layout admin.
+2. Buat Server Action di app/admin/actions.js untuk menyimpan produk baru ke tabel "produk" di Supabase.
+3. Wajib verifikasi sesi/login admin di sisi server sebelum insert data. Jika tidak terautentikasi, tolak operasi.
+4. Lakukan validasi input (nama dan harga wajib diisi, harga harus angka positif).
+5. Setelah berhasil disimpan, lakukan revalidatePath pada rute katalog ('/') dan admin ('/admin'), lalu alihkan pengguna kembali ke halaman /admin dengan pesan sukses. Tampilkan pesan error jika proses gagal.
+6. Hapus komponen CatatanBelumAktif yang terkait US-08.**
+
+**Hasil:Viewed page.jsx:1-16
+Viewed FormProduk.jsx:1-35
+Created actions.js
+Created FormProduk.jsx
+Created page.jsx
+Created page.jsx
+Viewed page.jsx:1-54
+Created page.jsx
+Ran command: Run npm run build (`npm run build`)
+Ran command: Start test server (`npm run start -- -p 3013`)
+Created test_tambah.js
+Ran command: Run test_tambah.js (`node "C:\Users\Astralz\.gemini\antigravity\brain\b2c99093-c8c3-4468-a9b2-2c1a70a6a60e\scratch\test_tambah.js"`)
+Created test_tambah_val.js
+Killed task Start test server
+
+Tugas implementasi **US-08 (Tambah Produk di Admin)** telah selesai dikerjakan sesuai aturan keamanan dan kriteria penyelesaian.
+
+### File yang Dibuat / Diubah
+
+1. **[`app/admin/actions.js`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js)**:
+   - Menambahkan Server Action [`tambahProduk`](file:///d:/creativehubtalent/katalog-umkm/app/admin/actions.js#L112-L177).
+   - Memverifikasi sesi login admin di sisi server menggunakan `requireAdmin()` sebelum melakukan insert ke tabel `produk`. Operasi ditolak jika sesi tidak terautentikasi.
+   - Melakukan validasi input di server: `nama` dan `harga` wajib diisi, serta `harga` harus berupa angka positif ($\ge 0$).
+   - Menyimpan data (`nama`, `harga`, `kategori`, `deskripsi`, `foto_url`) ke tabel `produk` di Supabase.
+   - Menjalankan `revalidatePath('/')` dan `revalidatePath('/admin')` saat berhasil, lalu mengalihkan pengguna ke `/admin?sukses=...`.
+2. **[`components/FormProduk.jsx`](file:///d:/creativehubtalent/katalog-umkm/components/FormProduk.jsx)**:
+   - Diperbarui untuk menerima props `action`, `state`, dan `isPending`.
+   - Menyediakan kolom input lengkap: `nama`, `harga`, `kategori`, `foto_url` (link foto / gambar), dan `deskripsi`.
+   - Menampilkan pesan error dari server jika validasi gagal atau terjadi kendala saat menyimpan.
+   - Mempertahankan layout dan kelas tampilan bawaan.
+3. **[`app/admin/produk/baru/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/produk/baru/page.jsx)**:
+   - Menghubungkan form ke Server Action `tambahProduk` dengan hook `useActionState`.
+   - Menghapus komponen `CatatanBelumAktif`.
+4. **[`app/admin/tambah/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/tambah/page.jsx)**:
+   - Disediakan sebagai alias rute alternatif untuk `/admin/tambah` sehingga dapat diakses via `/admin/produk/baru` maupun `/admin/tambah`.
+5. **[`app/admin/page.jsx`](file:///d:/creativehubtalent/katalog-umkm/app/admin/page.jsx)**:
+   - Ditambahkan penanganan parameter pencarian URL (`searchParams`) untuk menampilkan kotak pesan sukses berwarna hijau saat admin selesai menambahkan produk.
+
+---
+
+### Cara Mengetes
+
+1. Jalankan aplikasi secara lokal:
+   ```bash
+   npm run dev
+   ```
+2. Pastikan sudah login di `/admin/login`, lalu buka halaman tambah produk di `http://localhost:3000/admin/produk/baru` (atau klik tombol **"Tambah produk"** di `/admin`).
+3. **Uji Validasi Form**:
+   - Kosongkan nama atau isi harga dengan nilai minus (contoh `-1000`), lalu klik **"Simpan produk"**:
+     - Sistem akan menolak dan menampilkan pesan error (misal: *"Harga harus berupa angka positif."*).
+4. **Uji Tambah Produk Berhasil**:
+   - Isi formulir dengan data valid (contoh: Nama: *Mouse Wireless Zen*, Harga: *150000*, Kategori: *Aksesoris*, Link Foto: */produk/tas.svg*, Deskripsi: *Mouse responsif tanpa kabel.*).
+   - Klik **"Simpan produk"**:
+     - Halaman akan dialihkan kembali ke `/admin`.
+     - Muncul pesan notifikasi hijau: *"Produk berhasil ditambahkan."*
+     - Produk baru langsung muncul di tabel admin dan di katalog utama (`/`).**
+
+**Perbaikan:**
+
+## US-09
+
+**Prompt:**
+
+**Hasil:**
+
+**Perbaikan:**
+
+## US-10
+
+**Prompt:**
+
+**Hasil:**
+
+**Perbaikan:**
+
+## US-11
+
+**Prompt:**
+
+**Hasil:**
+
+**Perbaikan:**
+
+## US-12 
+
+**Prompt:**
+
+**Hasil:**
+
+**Perbaikan:**
+
+## US-13
+
+**Prompt:**
+
+**Hasil:**
+
+**Perbaikan:**
+
+## US-14
+
+**Prompt:**
+
+**Hasil:**
 
 **Perbaikan:**
 

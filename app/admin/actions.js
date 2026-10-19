@@ -110,3 +110,66 @@ export async function gantiPassword(prevState, formData) {
 }
 
 export const ubahPassword = gantiPassword;
+
+/**
+ * Server Action untuk menambah produk baru ke database Supabase.
+ */
+export async function tambahProduk(prevState, formData) {
+  try {
+    const data = formData instanceof FormData ? formData : prevState;
+    const nama = data?.get?.("nama")?.toString()?.trim();
+    const hargaStr = data?.get?.("harga")?.toString()?.trim();
+    const kategori = data?.get?.("kategori")?.toString()?.trim() || null;
+    const deskripsi = data?.get?.("deskripsi")?.toString()?.trim() || null;
+    const foto_url =
+      (data?.get?.("foto_url") || data?.get?.("gambar"))?.toString()?.trim() || null;
+
+    // Validasi input
+    if (!nama) {
+      return { error: "Nama produk wajib diisi." };
+    }
+
+    if (!hargaStr || isNaN(Number(hargaStr))) {
+      return { error: "Harga wajib diisi dengan angka." };
+    }
+
+    const harga = parseInt(hargaStr, 10);
+    if (harga < 0) {
+      return { error: "Harga harus berupa angka positif." };
+    }
+
+    // Verifikasi sesi admin di sisi server sebelum insert
+    let supabase;
+    try {
+      const auth = await requireAdmin();
+      supabase = auth.supabase;
+    } catch {
+      return { error: "Operasi ditolak: Anda harus login sebagai admin." };
+    }
+
+    // Simpan ke database Supabase
+    const { error: insertError } = await supabase.from("produk").insert([
+      {
+        nama,
+        harga,
+        kategori,
+        deskripsi,
+        foto_url,
+      },
+    ]);
+
+    if (insertError) {
+      return { error: `Gagal menyimpan produk: ${insertError.message}` };
+    }
+  } catch (err) {
+    if (err?.message === "NEXT_REDIRECT" || err?.digest?.startsWith?.("NEXT_REDIRECT")) {
+      throw err;
+    }
+    return { error: err.message || "Terjadi kesalahan saat menyimpan produk." };
+  }
+
+  // Revalidate rute katalog dan admin
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin?sukses=" + encodeURIComponent("Produk berhasil ditambahkan."));
+}
