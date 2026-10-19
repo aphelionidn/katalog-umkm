@@ -349,8 +349,10 @@ Pedoman:
 - Deskripsikan kegunaan, keunggulan, dan daya tarik utama produk ini bagi pembeli.
 - Tulis langsung teks deskripsinya tanpa kalimat pembuka seperti "Tentu, ini deskripsinya" dan tanpa tanda kutip.`;
 
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: "POST",
