@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function HalamanAdmin({ searchParams }) {
   const sp = await searchParams;
   const pesanSukses = sp?.sukses || sp?.pesan;
+  const pesanErrorUrl = sp?.error;
 
   const supabase = await createSessionClient();
   const {
@@ -45,6 +46,12 @@ export default async function HalamanAdmin({ searchParams }) {
       {pesanSukses && (
         <div className="rounded-lg border border-garis bg-permukaan p-3 text-sm font-medium text-utama">
           {pesanSukses}
+        </div>
+      )}
+
+      {pesanErrorUrl && (
+        <div className="rounded-lg border border-garis bg-permukaan p-3 text-sm font-medium text-bahaya">
+          {pesanErrorUrl}
         </div>
       )}
 

@@ -683,9 +683,17 @@ Tugas implementasi **US-09 (Edit / Ubah Produk)** telah selesai dikerjakan sesua
 
 **Perbaikan:**
 
-## US-10
+## US-10 Hapus produk (harus terkunci login)
 
-**Prompt:**
+**Prompt:Baca docs/user-stories.md bagian US-10 dan AGENTS.md (khususnya aturan mutasi data dan proteksi keamanan).
+
+Buat fitur hapus produk di halaman admin:
+1. Tambahkan tombol "Hapus" pada setiap baris produk di app/admin/page.jsx (atau komponen tabel/daftar produk admin yang terkait).
+2. Tambahkan konfirmasi sebelum menghapus (misalnya dialog konfirmasi browser/modal sederhana "Apakah Anda yakin ingin menghapus produk ini?") untuk mencegah klik yang tidak disengaja.
+3. Buat Server Action di app/admin/actions.js untuk menghapus produk dari tabel "produk" di Supabase berdasarkan id produk.
+4. Wajib periksa autentikasi/sesi admin di server sebelum menjalankan query hapus (DELETE). Tolak jika tidak terautentikasi.
+5. Setelah produk berhasil dihapus, panggil revalidatePath('/', 'page') dan revalidatePath('/admin', 'page') agar daftar produk terbarukan secara otomatis, lalu tampilkan notifikasi berhasil. Tampilkan pesan error jika proses gagal.
+6. Pertahankan style layout admin yang sudah ada dan hapus komponen CatatanBelumAktif yang terkait US-10.**
 
 **Hasil:**
 

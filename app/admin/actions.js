@@ -254,3 +254,61 @@ export async function ubahProduk(prevState, formData) {
 }
 
 export const editProduk = ubahProduk;
+
+/**
+ * Server Action untuk menghapus produk dari tabel "produk" di Supabase.
+ */
+export async function hapusProduk(arg1, arg2) {
+  let id;
+  const isDirect = arg1 instanceof FormData;
+  const data = arg2 instanceof FormData ? arg2 : (isDirect ? arg1 : null);
+
+  if (data) {
+    const idStr = data.get("id")?.toString()?.trim();
+    id = idStr ? parseInt(idStr, 10) : null;
+  } else if (typeof arg1 === "number" || typeof arg1 === "string") {
+    id = parseInt(arg1.toString(), 10);
+  }
+
+  if (!id || isNaN(id)) {
+    if (isDirect) {
+      redirect("/admin?error=" + encodeURIComponent("ID produk tidak valid."));
+    }
+    return { error: "ID produk tidak valid." };
+  }
+
+  // Wajib periksa autentikasi/sesi admin di server sebelum DELETE
+  let supabase;
+  try {
+    const auth = await requireAdmin();
+    supabase = auth.supabase;
+  } catch {
+    if (isDirect) {
+      redirect("/admin?error=" + encodeURIComponent("Operasi ditolak: Anda harus login sebagai admin."));
+    }
+    return { error: "Operasi ditolak: Anda harus login sebagai admin." };
+  }
+
+  try {
+    const { error: deleteError } = await supabase
+      .from("produk")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      if (isDirect) {
+        redirect("/admin?error=" + encodeURIComponent(`Gagal menghapus produk: ${deleteError.message}`));
+      }
+      return { error: `Gagal menghapus produk: ${deleteError.message}` };
+    }
+  } catch (err) {
+    if (err?.message === "NEXT_REDIRECT" || err?.digest?.startsWith?.("NEXT_REDIRECT")) {
+      throw err;
+    }
+    return { error: err.message || "Terjadi kesalahan saat menghapus produk." };
+  }
+
+  revalidatePath("/", "page");
+  revalidatePath("/admin", "page");
+  redirect("/admin?sukses=" + encodeURIComponent("Produk berhasil dihapus."));
+}
